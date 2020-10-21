@@ -1,0 +1,24 @@
+.Taskbar {
+  background: #333;
+  display: flex;
+  flex-wrap: wrap;
+  user-select: none;
+
+  &.center {
+    justify-content: center;
+  }
+
+  &.vertical {
+    flex-direction: column;
+    height: 100%;
+    width: min-content;
+    .last-item {
+      margin-left: unset;
+      margin-top: auto;
+    }
+  }
+
+  .last-item {
+    margin-left: auto;
+  }
+}

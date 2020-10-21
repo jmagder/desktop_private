@@ -1,0 +1,32 @@
+.TaskbarButton {
+  display: flex;
+  padding: 5px 7px;
+  align-items: center;
+  border-top: 3px solid grey;
+  background: #555;
+  margin: 2px;
+  color: white;
+  position: relative;
+  cursor: pointer;
+
+  .app-name {
+    padding: 0 12px;
+  }
+
+  .hide-label {
+    display: none;
+  }
+
+  &.isActive {
+    background: #1f5161;
+    border-top-color: #3d86ce;
+    &:hover {
+      border-top-color: #2cd5fe;
+      background-color: #3085a1;
+    }
+  }
+  &:hover {
+    background-color: #3085a1;
+    border-top-color: #2cd5fe;
+  }
+}

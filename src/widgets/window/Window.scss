@@ -1,0 +1,158 @@
+$HEADER_HEIGHT: 22px;
+$HEADER_PADDING: 5px;
+$WINDOW_PADDING: 0px;
+
+.Window {
+  background: #31363B;
+  position: absolute;
+  min-width: 250px;
+  min-height: 160px;
+  transition: all 200ms;
+  transform: scale(1);
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.40);
+
+  &.visibility-enter {
+    opacity: 0;
+  }
+
+  &.visibility-exit {
+    opacity: 0;
+  }
+
+  &.visibility-enter-done {
+    opacity: 1;
+  }
+
+  &.visibility-enter-active {
+    opacity: 1;
+  }
+
+  &.visibility-exit-done {
+    opacity: 0;
+  }
+
+  &.maximized {
+    width: 100% !important;
+    height: 100% !important;
+    top: 0 !important;
+    left: 0 !important;
+  }
+
+  &.minimized {
+    transform: translateY(100vh);
+    opacity: 0;
+  }
+
+  // Prevent animations when dragging or resizing.
+  &.resizing, &.dragging {
+    transition: none;
+  }
+
+  .window-icon {
+    width: 20px;
+    height: 20px;
+    float: left;
+    padding: 6px 0px 5px 10px;
+    user-select: none;
+    cursor: grab;
+  }
+
+  .header {
+    height: $HEADER_HEIGHT;
+    width: 100%;
+    padding: $HEADER_PADDING 0px;
+    background: #297282;
+    cursor: grab;
+    user-select: none;
+
+    .tools {
+      margin-right: $WINDOW_PADDING;
+    }
+  }
+
+  .window-title {
+    padding-left: 10px;
+    color: black;
+    transition: color 200ms;
+  }
+
+  &.active {
+    .window-title {
+      color: white;
+    }
+
+    .window-tools {
+      color: white;
+
+      &:hover {
+        color: black;
+      }
+    }
+  }
+
+  .window-tools {
+    float: right;
+    transition: color 200ms;
+    font-size: $HEADER_HEIGHT;
+    margin-right: 8px;
+    cursor: pointer;
+    color: black;
+
+    &:hover {
+      color: white;
+    }
+  }
+
+
+  .body {
+    padding: $WINDOW_PADDING;
+    height: calc(100% - #{$HEADER_HEIGHT + $HEADER_PADDING + 5});
+    width: 100%;
+    overflow: hidden;
+    background: white;
+    //border: 1px solid grey;
+    border-top: 0px;
+    box-sizing: border-box;
+  }
+
+  textarea {
+    width: 100%;
+    height: 100%;
+    border: 0px;
+    //opacity: 80%;
+  }
+
+  .resize {
+    background: #ff0000;
+    width: 8px;
+    height: 8px;
+    position: absolute;
+    z-index: 1;
+    opacity: 0;
+
+    &.right {
+      top: 0;
+      right: 0;
+      height: 100%;
+      z-index: 0;
+      background: purple;
+      cursor: e-resize;
+    }
+
+    &.bottom-right {
+      bottom: 0;
+      right: 0;
+      cursor: se-resize;
+    }
+
+    &.bottom {
+      bottom: 0;
+      left: 0;
+      background: purple;
+      z-index: 0;
+      width: 100%;
+      height: 8px;
+      cursor: s-resize;
+    }
+  }
+}
