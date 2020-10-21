@@ -1,0 +1,103 @@
+body {
+  background: darkgray;
+}
+
+.App {
+  overflow: hidden;
+}
+
+* {
+  transition: background-color 200ms;
+}
+
+img {
+  user-select: none;
+}
+#desktop {
+  position: relative;
+}
+
+#taskbar {
+  z-index: 500;
+  box-shadow: 0 0 5px 0 rgba(20, 20, 20, 0.55);
+}
+
+textarea {
+  box-sizing: border-box;
+  outline: none;
+  resize: none;
+  padding: 15px;
+}
+
+// Configurations for the various desktop layouts.
+.grid-container {
+  display: grid;
+  background: black;
+  height: 100vh;
+  grid-template-columns: min-content auto min-content;
+  grid-template-rows: min-content auto min-content;
+
+  > div {
+    background: black;
+  }
+
+  &.taskbar-bottom {
+    #desktop {
+      grid-column: 1 / span 3;
+      grid-row: 1 / span 2;
+    }
+
+    #taskbar {
+      grid-column: 1/ span 3;
+      grid-row: 3;
+    }
+  }
+
+  &.taskbar-top {
+    #desktop {
+      grid-column: 1 / span 3;
+      grid-row: 2 / span 2;
+    }
+
+    #taskbar {
+      grid-column: 1/ span 3;
+      grid-row: 1;
+    }
+  }
+
+  &.taskbar-left {
+    #desktop {
+      grid-column: 2 / span 2;
+      grid-row: 1 / span 3;
+    }
+
+    #taskbar {
+      grid-column: 1;
+      grid-row: 1 / span 3;
+      width: min-content;
+    }
+  }
+
+  &.taskbar-right {
+    #desktop {
+      grid-column: 1 / span 2;
+      grid-row: 1 / span 3;
+    }
+
+    #taskbar {
+      grid-column: 3;
+      grid-row: 1 / span 3;
+    }
+  }
+
+}
+
+.taskbar-anchor {
+  grid-column: 1 / 4;
+  grid-row: 3
+}
+
+.small-icon {
+  width: 32px;
+  height: 32px;
+}

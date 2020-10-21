@@ -1,0 +1,26 @@
+$REGENERATE_AREA: 40px;
+
+.ChartContainer {
+  user-select: none;
+  height: 100%;
+  width: 100%;
+
+  .chartHolder {
+    height: calc(100% - #{$REGENERATE_AREA});
+    width: 100%;
+  }
+
+  .regenerate {
+    text-align: center;
+    height: $REGENERATE_AREA;
+  }
+}
+
+tspan, recharts-legend-item-text {
+  font-size: 13px;
+}
+
+.recharts-tooltip-cursor {
+  fill: transparent;
+}
+
