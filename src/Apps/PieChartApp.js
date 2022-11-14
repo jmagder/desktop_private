@@ -34,7 +34,7 @@ const PieChartApp = ({name, timestamp}) => {
                         <Pie data={generatedData}
                              innerRadius={'30%'}
                              margin={{bottom: 25}}
-                             animationBegin={0} animationDuration={450}>
+                             animationBegin={0} animationDuration={450} dataKey="value">
                             {generatedData.map((entry, index) => <Cell fill={sliceColors[index]}/>)}
                         </Pie>
                         <Tooltip/>
