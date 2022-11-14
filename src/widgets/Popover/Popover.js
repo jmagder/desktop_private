@@ -78,8 +78,9 @@ const Popover = ({anchor, content, children, displayBeside, redrawOnChange, clos
         }
         setMenuIsOpen(setOpen);
     }
-    const handleClick = () => {
+    const handleClick = (event) => {
         changeOpenState(!menuIsOpen);
+        event.nativeEvent.stopImmediatePropagation()
     };
 
     const handleClickPopover = (event) => {
