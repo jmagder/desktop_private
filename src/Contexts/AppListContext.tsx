@@ -12,7 +12,7 @@ import PieChartApp from "../Apps/PieChartApp";
 import NotesApp from "../Apps/NotesApp";
 
 // Represents an application definition
-interface AppEntry {
+export interface AppEntry {
     icon: any,
     name: string,
     description: string,
@@ -20,18 +20,18 @@ interface AppEntry {
 }
 
 // Window dimensions, zIndex, location, etc
-interface WindowsConfiguration {
-    width: number,
-    height: number,
-    top: string,
-    left: string,
-    maximized: boolean,
-    minimized: boolean,
-    zIndex: number,
+export interface WindowsConfiguration {
+    width?: number,
+    height?: number,
+    top?: number,
+    left?: number,
+    maximized?: boolean,
+    minimized?: boolean,
+    zIndex?: number,
 }
 
 // A realized instance of an AppEntry.
-interface AppInstance extends AppEntry {
+export interface AppInstance extends AppEntry {
     // timestamp is in ms.
     timestamp: number,
     lastActive: number,
@@ -90,7 +90,7 @@ export interface AppListHook {
     openApp: (name: string) => void,
     closeApp: (appName: string, timestamp: number) => void,
     persistNewAppConfig: (name: string, timestamp: number, windowConfiguration: WindowsConfiguration) => void,
-    setActiveApp: (name: string, timestamp: number, toggle: boolean) => void,
+    setActiveApp: (name?: string, timestamp?: number, toggle?: boolean) => void,
 }
 
 const useAppList = (): AppListHook => {
@@ -101,7 +101,7 @@ const useAppList = (): AppListHook => {
         localStorage.setItem('openAppList', JSON.stringify(state.openAppList));
     }
 
-    const setActiveApp = (name: string, timestamp: number, toggle: boolean) => {
+    const setActiveApp = (name?: string, timestamp?: number, toggle?: boolean) => {
         const newState: AppState = {...state};
 
         const clickedAppConfig = newState.openAppList
