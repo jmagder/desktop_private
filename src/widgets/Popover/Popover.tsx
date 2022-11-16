@@ -1,9 +1,12 @@
-import React, {useEffect, useRef, useState} from "react";
+ import React, {useEffect, useRef, useState} from "react";
 import './Popover.scss';
+import CSS from 'csstype';
 import {CSSTransition} from "react-transition-group";
 
-const calculateStyle = (displayBeside, anchorNode, hiddenContentNode, padding = 0) => {
-    const style = {};
+
+// JEFF: Todo find type of anchornode
+const calculateStyle = (displayBeside: boolean, anchorNode: any, hiddenContentNode:  any, padding = 0) => {
+    const style: CSS.Properties = {};
     const xCenter = document.body.offsetWidth / 2;
     const yCenter = document.body.offsetHeight / 2;
     const boundingRect = anchorNode.getClientRects()[0];
@@ -41,14 +44,23 @@ const calculateStyle = (displayBeside, anchorNode, hiddenContentNode, padding = 
     return style;
 }
 
-const Popover = ({anchor, content, children, displayBeside, redrawOnChange, closeOnClick}) => {
+type Props = {
+    anchor: React.ReactNode,
+    content: React.ReactNode,
+    children: React.ReactNode,
+    displayBeside: boolean,
+    redrawOnChange: boolean,
+    closeOnClick: boolean
+}
+
+const Popover = ({anchor, content, children, displayBeside, redrawOnChange, closeOnClick}: Props) => {
     const popoverAnchor = anchor || children;
 
     const [menuIsOpen, setMenuIsOpen] = useState(false);
     const [popoverStyle, setPopOverStyle] = useState({});
 
-    const anchorEl = useRef(null);
-    const hiddenContentEl = useRef(null);
+    const anchorEl = useRef<HTMLDivElement>(null);
+    const hiddenContentEl = useRef<HTMLDivElement>(null);
 
     // Calculate position after anchored component is rendered.
     useEffect(() => {
@@ -70,7 +82,7 @@ const Popover = ({anchor, content, children, displayBeside, redrawOnChange, clos
         removeOutsideListeners();
     }
 
-    const changeOpenState = (setOpen) => {
+    const changeOpenState = (setOpen: boolean) => {
         if (setOpen && !menuIsOpen) {
             addOutsideListeners();
         } else if (!setOpen) {
@@ -78,12 +90,12 @@ const Popover = ({anchor, content, children, displayBeside, redrawOnChange, clos
         }
         setMenuIsOpen(setOpen);
     }
-    const handleClick = (event) => {
+    const handleClick = (event: React.MouseEvent<HTMLElement>) => {
         changeOpenState(!menuIsOpen);
         event.nativeEvent.stopImmediatePropagation()
     };
 
-    const handleClickPopover = (event) => {
+    const handleClickPopover = (event: React.MouseEvent<HTMLElement>) => {
         if (closeOnClick) {
             changeOpenState(false);
         }
