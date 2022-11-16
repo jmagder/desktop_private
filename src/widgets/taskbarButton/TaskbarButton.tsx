@@ -6,7 +6,7 @@ type Props=  {
     name: string,
     icon: string,
     isActive: boolean,
-    handleClick: MouseEventHandler,
+    handleClick?: MouseEventHandler,
     children:  React.ReactNode,
     hideLabel: boolean,
 }

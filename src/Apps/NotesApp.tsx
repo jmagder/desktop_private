@@ -1,11 +1,16 @@
-import React, {useState} from "react";
+import React, {ChangeEvent, useState} from "react";
 
-const NotesApp = ({name, timestamp}) => {
+type Props = {
+    name: string,
+    timestamp: Date
+}
+
+const NotesApp = ({name, timestamp}: Props) => {
     const APP_PERSIST_KEY = `${name}-${timestamp}`;
     const deserializedState = localStorage.getItem(APP_PERSIST_KEY);
     const [textContent, setTextContent] = useState(deserializedState || "");
 
-    const handleChange = (event) => {
+    const handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
         const text = event.target.value;
         localStorage.setItem(APP_PERSIST_KEY, text);
         setTextContent(text);
