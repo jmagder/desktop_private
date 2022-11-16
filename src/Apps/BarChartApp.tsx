@@ -2,11 +2,22 @@ import React, {useState} from "react";
 import './ChartApp.scss';
 import {BarChart, ResponsiveContainer, Bar, XAxis, YAxis, Tooltip, Legend} from 'recharts';
 
-const BarChartApp = ({name, timestamp}) => {
-    const APP_PERSIST_KEY = `${name}-${timestamp}`;
+type Props = {
+    name: string,
+    timestamp: Date,
+}
+
+type DataPoint = {
+    name: string;
+    series1: number,
+    series2: number
+}
+
+const BarChartApp = ({name, timestamp}: Props) => {
+    const APP_PERSIST_KEY: string = `${name}-${timestamp}`;
 
     const generateData = () => {
-        const dataBuffer = [];
+        const dataBuffer: DataPoint[] = [];
         for (let i = 0; i < 10; i++) {
             dataBuffer.push({
                 name: `Day ${i + 1}`,
@@ -18,9 +29,11 @@ const BarChartApp = ({name, timestamp}) => {
         return dataBuffer;
     }
 
-    const deserializedState = JSON.parse(localStorage.getItem(APP_PERSIST_KEY)) || generateData();
+    const persistedData = localStorage.getItem(APP_PERSIST_KEY);
+
+    const deserializedState = persistedData ? JSON.parse(persistedData) : generateData();
     const [generatedData, setGeneratedDate] = useState(deserializedState);
-    const formatLegend = (legendName) => {
+    const formatLegend = (legendName: string) => {
         return legendName === 'series1' ? "Series 1" : "Series 2";
     }
 

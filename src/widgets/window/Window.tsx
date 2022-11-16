@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {useAppList} from "../../Contexts/AppListContext";
+import {useAppList, WindowsConfiguration} from "../../Contexts/AppListContext";
 import './Window.scss';
 
 import {IoIosCloseCircleOutline as CloseIcon} from 'react-icons/io'
@@ -8,35 +8,50 @@ import {AiOutlineExpandAlt as MaximizeIcon} from 'react-icons/ai'
 import {CSSTransition} from "react-transition-group";
 import classNames from "classnames";
 
-// TODO: Move more of config to not be passed in ?
-const Window = ({name, timestamp, icon, windowConfiguration = {}, boundingNode, isActive}) => {
+type Props = {
+    name: string,
+    timestamp: number,
+    icon: string,
+    windowConfiguration: WindowsConfiguration,
+    boundingNode: React.MutableRefObject<HTMLElement|null>,
+    isActive: boolean,
+}
+
+const Window = ({name, timestamp, icon, windowConfiguration = {}, boundingNode, isActive}: Props) => {
     const {width, height, zIndex, top, left, minimized, maximized} = windowConfiguration;
-    const windowNodeRef = React.useRef(null);
+    const windowNodeRef = React.useRef<HTMLDivElement>(null);
     const {setActiveApp, persistNewAppConfig, closeApp, getAppFromName} = useAppList();
-    const {content} = getAppFromName(name);
+    const {content} = getAppFromName(name) || {}
+
 
     // State variables for dragging and resizing the window.
-    let xMouseDownStart, yMouseDownStart = 0;
-    let parentBoundingBox, windowBoundingBox = {};
+    let xMouseDownStart: number, yMouseDownStart = 0;
+    let parentBoundingBox: DOMRect, windowBoundingBox: DOMRect;
 
     // Resize window variables
-    let xMaxGrowth, yMaxGrowth = 0;
-    let startWidth, startHeight = 0;
-    let constrainToHorizontal, constrainToVertical = false;
+    let xMaxGrowth: number, yMaxGrowth = 0;
+    let startWidth: number, startHeight = 0;
+    let constrainToHorizontal: boolean, constrainToVertical = false;
 
     // Drag window offset variables.
-    let dragXOffset, dragYOffset = 0;
+    let dragXOffset: number, dragYOffset = 0;
 
     // Used for animating appearing and disappearing
     const [firstTime, setFirstTime] = useState(true);
     const [closing, setIsClosing] = useState(false);
 
     const getBoundingNode = () => {
-        return boundingNode.current || windowNodeRef.current.parentNode;
+        if (boundingNode.current) {
+            return boundingNode.current
+        }
+        if (windowNodeRef.current) {
+            return windowNodeRef.current.parentNode;
+        }
+        return null;
     }
 
-    const persistWindowPositioning = (maximized, minimized) => {
-        const style = windowNodeRef.current.style;
+    const persistWindowPositioning = (maximized?: boolean, minimized?: boolean) => {
+        const style = windowNodeRef.current ? windowNodeRef.current.style : {top: '0', left: '0', width: '0', height: '0'};
         persistNewAppConfig(name, timestamp, {
             top: parseInt(style.top),
             left: parseInt(style.left),
@@ -47,37 +62,42 @@ const Window = ({name, timestamp, icon, windowConfiguration = {}, boundingNode, 
         });
     }
 
-    const getEventCoordinates = (event) => {
+    const getEventCoordinates = (event: React.MouseEvent) => {
         const result = {
             clientX: event.clientX,
             clientY: event.clientY
         }
         if (event.type.startsWith('touch')) {
-            result.clientX = Math.round(event.touches[0].clientX);
-            result.clientY = Math.round(event.touches[0].clientY);
+            const touchEvent = event as unknown as TouchEvent;
+            result.clientX = Math.round(touchEvent.touches[0].clientX);
+            result.clientY = Math.round(touchEvent.touches[0].clientY);
         }
         return result;
     }
 
-    const setupMouseInteraction = (event) => {
-        windowBoundingBox = windowNodeRef.current.getBoundingClientRect();
+    const setupMouseInteraction = (event: React.MouseEvent | React.TouchEvent) => {
+        // @ts-ignore
+        windowBoundingBox = windowNodeRef.current && windowNodeRef.current.getBoundingClientRect();
+        // @ts-ignore
         parentBoundingBox = getBoundingNode().getBoundingClientRect();
-        const coordinates = getEventCoordinates(event);
+        const coordinates = getEventCoordinates(event as React.MouseEvent);
         xMouseDownStart = coordinates.clientX;
         yMouseDownStart = coordinates.clientY;
     }
 
-    const handleMouseDownResize = (event) => {
+    const handleMouseDownResize = (event: React.MouseEvent | React.TouchEvent) => {
         setupMouseInteraction(event);
 
         xMaxGrowth = parentBoundingBox.right - windowBoundingBox.right;
         yMaxGrowth = parentBoundingBox.bottom - windowBoundingBox.bottom;
 
         const node = windowNodeRef.current;
-        startWidth = node.clientWidth;
-        startHeight = node.clientHeight;
+        if (node) {
+            startWidth = node.clientWidth;
+            startHeight = node.clientHeight;
+        }
 
-        const constrain = event.target.getAttribute('constrain');
+        const constrain = (event.target as HTMLElement).getAttribute('data-constrain');
         if (constrain === 'horizontal') {
             constrainToHorizontal = true;
         }
@@ -85,48 +105,58 @@ const Window = ({name, timestamp, icon, windowConfiguration = {}, boundingNode, 
             constrainToVertical = true;
         }
 
+        // @ts-ignore
         document.addEventListener('mousemove', handleMouseMoveResize);
+        // @ts-ignore
         document.addEventListener('touchmove', handleMouseMoveResize);
         document.addEventListener('mouseup', handleMouseUpResize);
         document.addEventListener('touchend', handleMouseUpResize);
 
-        setActiveApp(name, timestamp);
+        setActiveApp(name, timestamp, false);
     }
 
-    const handleMouseMoveResize = (event) => {
+    const handleMouseMoveResize = (event: React.MouseEvent) => {
         const {clientX, clientY} = getEventCoordinates(event);
         const diffX = clientX - xMouseDownStart;
         const diffY = clientY - yMouseDownStart;
 
         if (!constrainToVertical) {
-            windowNodeRef.current.style.width = startWidth + Math.min(diffX, xMaxGrowth) + 'px';
+            windowNodeRef.current!.style.width = startWidth + Math.min(diffX, xMaxGrowth) + 'px';
         }
         if (!constrainToHorizontal) {
-            windowNodeRef.current.style.height = startHeight + Math.min(diffY, yMaxGrowth) + 'px';
+            windowNodeRef.current!.style.height = startHeight + Math.min(diffY, yMaxGrowth) + 'px';
         }
-        windowNodeRef.current.classList.add('resizing');
+        windowNodeRef.current!.classList.add('resizing');
     }
 
     const handleMouseUpResize = () => {
+        // @ts-ignore
         document.removeEventListener('mousemove', handleMouseMoveResize);
+        // @ts-ignore
         document.removeEventListener('touchmove', handleMouseMoveResize);
         document.removeEventListener('mouseup', handleMouseUpResize);
         document.removeEventListener('touchup', handleMouseUpResize);
-        windowNodeRef.current.classList.remove('resizing');
+        windowNodeRef.current!.classList.remove('resizing');
         constrainToHorizontal = constrainToVertical = false;
         persistWindowPositioning();
     }
 
-    const handleMouseDownDrag = (event) => {
+    const handleMouseDownDrag = (event: React.MouseEvent | React.TouchEvent) => {
         setupMouseInteraction(event);
-        const coordinates = getEventCoordinates(event);
-        setActiveApp(name, timestamp);
+        const coordinates = getEventCoordinates(event as React.MouseEvent);
+        setActiveApp(name, timestamp, false);
         if (maximized) {
             return
         }
-        const node = event.currentTarget;
-        if (event.target.attributes.drag) {
+        const node = event.currentTarget as HTMLElement;
+        if (!node) {
+            return;
+        }
+        // @ts-ignore
+        if (event.target.attributes['data-drag']) {
+            // @ts-ignore
             document.addEventListener('mousemove', handleMouseMoveDrag);
+            // @ts-ignore
             document.addEventListener('touchmove', handleMouseMoveDrag);
             document.addEventListener('mouseup', handleMouseUpDrag);
             document.addEventListener('touchend', handleMouseUpDrag);
@@ -135,9 +165,12 @@ const Window = ({name, timestamp, icon, windowConfiguration = {}, boundingNode, 
         }
     }
 
-    const handleMouseMoveDrag = (e) => {
+    const handleMouseMoveDrag = (e: React.MouseEvent) => {
         const {clientX, clientY} = getEventCoordinates(e);
         const draggedNode = windowNodeRef.current;
+        if (!draggedNode) {
+            return;
+        }
         const draggedBoundingBox = draggedNode.getBoundingClientRect();
         const xMax = parentBoundingBox.width - draggedBoundingBox.width;
         const yMax = parentBoundingBox.height - draggedBoundingBox.height;
@@ -155,11 +188,13 @@ const Window = ({name, timestamp, icon, windowConfiguration = {}, boundingNode, 
     }
 
     const handleMouseUpDrag = () => {
+        // @ts-ignore
         document.removeEventListener('mousemove', handleMouseMoveDrag);
+        // @ts-ignore
         document.removeEventListener('touchmove', handleMouseMoveDrag);
         document.removeEventListener('mouseup', handleMouseUpDrag);
         document.removeEventListener('touchend', handleMouseUpDrag);
-        windowNodeRef.current.classList.remove('dragging');
+        windowNodeRef.current!.classList.remove('dragging');
         persistWindowPositioning();
     }
 
@@ -176,7 +211,7 @@ const Window = ({name, timestamp, icon, windowConfiguration = {}, boundingNode, 
     }
 
     const handleMinimizeToggle = () => {
-        setActiveApp(null);
+        setActiveApp();
         persistWindowPositioning(false, !minimized);
     }
 
@@ -204,29 +239,33 @@ const Window = ({name, timestamp, icon, windowConfiguration = {}, boundingNode, 
 
     // Wrap the component with props specifying the name and timestamp.  This allows the app to persist and load
     // persisted data.
+    // @ts-ignore
     const wrappedContent = React.Children.map(content, child => React.cloneElement(child, {timestamp, name}));
 
+    if (!windowNodeRef) {
+        return <></>
+    }
     // Set default position to whatever the last save translate was.
     return (
         <CSSTransition in={!firstTime && !closing} classNames='visibility' timeout={200}>
             <div ref={windowNodeRef} className={classes} style={style} onMouseDown={handleMouseDownDrag}
                  onTouchStart={handleMouseDownDrag}>
-                <img className="window-icon" alt="" src={icon} drag="true" draggable="false"/>
-                <div className="header drag" drag="true">
-                    <div className="tools" drag="true">
+                <img className="window-icon" alt="" src={icon} data-drag="true" draggable="false"/>
+                <div className="header drag" data-drag="true">
+                    <div className="tools" data-drag="true">
                         <span className="window-tools" onClick={handleCloseClick}><CloseIcon/></span>
                         <span className="window-tools" onClick={handleMaximizeToggle}><MaximizeIcon/></span>
                         <span className="window-tools" onClick={handleMinimizeToggle}><MinimizeIcon/></span>
                     </div>
-                    <span className="window-title" drag="true">{name}</span>
+                    <span className="window-title" data-drag="true">{name}</span>
                 </div>
                 <div className="body">
                     <div
                         onMouseDown={handleMouseDownResize} onTouchStart={handleMouseDownResize}
                         onMouseUp={handleMouseUpResize} onTouchEnd={handleMouseUpResize}>
-                        <div constrain="horizontal" className="resize right"/>
+                        <div data-constrain="horizontal" className="resize right"/>
                         <div className="resize bottom-right"/>
-                        <div constrain="vertical" className="resize bottom"/>
+                        <div data-constrain="vertical" className="resize bottom"/>
                     </div>
                     {wrappedContent}
                 </div>

@@ -3,7 +3,14 @@ import "./Menu.scss"
 
 import {useAppList} from "../../Contexts/AppListContext";
 
-const MenuEntry = ({icon, name, description, clickHandler}) => {
+type Props = {
+  icon: string,
+  name: string,
+  description: string,
+  clickHandler: (name: string) => void,
+}
+
+const MenuEntry = ({icon, name, description, clickHandler}: Props) => {
     return (
         <div className='MenuEntry' onClick={() => clickHandler(name)}>
             <img src={icon} className="icon-holder" alt=""/>

@@ -6,18 +6,16 @@ const Configuration = () => {
 
     const {centered, setCentered, taskbarLocation, setTaskbarLocation} = useDesktopConfig();
 
-    const onTaskbarChange = (event) => {
+    const onTaskbarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setTaskbarLocation(event.target.value);
     };
 
-    const onCenterChange = (event) => {
+    const onCenterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setCentered(event.target.value === "true");
     };
 
-
     return (
         <div className="Configuration">
-            {/*<fieldset onChange={(event) => setTaskbarLocation(event.target.value)}>*/}
             <fieldset>
                 <legend>Taskbar Location</legend>
                 <label>
@@ -41,20 +39,19 @@ const Configuration = () => {
                     Left
                 </label>
             </fieldset>
-            <fieldset onChange={(event) => setCentered(event.target.value === "true")}>
+            <fieldset>
                 <legend>Taskbar Centering</legend>
                 <label>
-                    <input type="radio" id="top" name='taskbarCentering' value={true} checked={centered} onChange={onCenterChange}/>
+                    <input type="radio" id="top" name='taskbarCentering' value="true" checked={centered} onChange={onCenterChange}/>
                     Centered
                 </label>
                 <label>
-                    <input type="radio" id="right" name='taskbarCentering' value={false} checked={!centered} onChange={onCenterChange}/>
+                    <input type="radio" id="right" name='taskbarCentering' value="false" checked={!centered} onChange={onCenterChange}/>
                     Not Centered
                 </label>
             </fieldset>
         </div>
     )
 };
-
 
 export default Configuration;

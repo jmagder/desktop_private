@@ -1,7 +1,16 @@
 import React from "react";
+import { MouseEventHandler } from "react";
 import './TaskbarButton.scss'
 
-const TaskbarButton = ({name, icon, isActive, handleClick, children, hideLabel}) => {
+type Props=  {
+    name?: string,
+    icon?: string,
+    isActive?: boolean,
+    handleClick?: MouseEventHandler,
+    children?:  React.ReactNode,
+    hideLabel?: boolean,
+}
+const TaskbarButton = ({name, icon, isActive, handleClick, children, hideLabel}: Props) => {
     return (
         <div
             className={`TaskbarButton  ${isActive ? 'isActive' : ''}`}
