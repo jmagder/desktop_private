@@ -1,38 +1,78 @@
 import React, {useContext, useState} from "react";
+
+// JEFF: TODO find out type for importing svg
+// @ts-ignore
 import Notes from "../icons/note.svg";
+// @ts-ignore
 import BarChartIcon from "../icons/bar-chart.svg"
+// @ts-ignore
 import PieChartIcon from "../icons/pie-chart.svg"
 import BarChartApp from "../Apps/BarChartApp";
 import PieChartApp from "../Apps/PieChartApp";
 import NotesApp from "../Apps/NotesApp";
 
-const AppListContext = React.createContext([{}, newState => {
-}]);
+// Represents an application definition
+interface AppEntry {
+    icon: any,
+    name: string,
+    description: string,
+    content: React.ReactNode
+}
 
-const applications = [
+// Window dimensions, zIndex, location, etc
+interface WindowsConfiguration {
+    width: number,
+    height: number,
+    top: string,
+    left: string,
+    maximized: boolean,
+    minimized: boolean,
+    zIndex: number,
+}
+
+// A realized instance of an AppEntry.
+interface AppInstance extends AppEntry {
+    // timestamp is in ms.
+    timestamp: number,
+    lastActive: number,
+    windowConfiguration: WindowsConfiguration,
+    isActive: boolean,
+}
+
+interface AppContext {
+    openAppList: AppInstance[]
+}
+
+interface AppState {
+    openAppList: AppInstance[],
+}
+
+const AppListContext = React.createContext<AppContext>({openAppList: []});
+
+const applications : AppEntry[] = [
     {
         icon: Notes,
         name: "Notes",
         description: "Take some notes",
-        content: <NotesApp/>
+        content: <NotesApp name="" timestamp={new Date()}/>
     },
     {
         icon: BarChartIcon,
         name: "Bar Graphs",
         description: "Randomized bar graphs",
-        content: <BarChartApp/>
+        content: <BarChartApp name="" timestamp={new Date()}/>
     },
     {
         icon: PieChartIcon,
         name: "Pie Chart",
         description: "Randomized pie graphs",
-        content: <PieChartApp/>
+        content: <PieChartApp name="" timestamp={new Date()}/>
     }
 ];
 
 const OPEN_APP_PERSISTENCE_KEY = 'openAppList';
 
-const AppListProvider = (props) => {
+const AppListProvider = (props: any) => {
     const storedState = localStorage.getItem(OPEN_APP_PERSISTENCE_KEY);
     const [state, setState] = useState({
         openAppList: (storedState && JSON.parse(storedState)) || []
@@ -43,15 +83,26 @@ const AppListProvider = (props) => {
 
 let numWindows = 0;
 
-const useAppList = () => {
+export interface AppListHook {
+    openAppList: AppInstance[],
+    availableAppList: AppEntry[],
+    getAppFromName: (name: string) => AppEntry | undefined,
+    openApp: (name: string) => void,
+    closeApp: (appName: string, timestamp: number) => void,
+    persistNewAppConfig: (name: string, timestamp: number, windowConfiguration: WindowsConfiguration) => void,
+    setActiveApp: (name: string, timestamp: number, toggle: boolean) => void,
+}
+
+const useAppList = (): AppListHook => {
+    // @ts-ignore
     const [state, setState] = useContext(AppListContext);
 
     const saveAppListState = () => {
         localStorage.setItem('openAppList', JSON.stringify(state.openAppList));
     }
 
-    const setActiveApp = (name, timestamp, toggle) => {
-        const newState = {...state};
+    const setActiveApp = (name: string, timestamp: number, toggle: boolean) => {
+        const newState: AppState = {...state};
 
         const clickedAppConfig = newState.openAppList
             .find(item => item.name === name && item.timestamp === timestamp);
@@ -59,17 +110,17 @@ const useAppList = () => {
         if (clickedAppConfig) {
             Object.assign(clickedAppConfig, {
                 lastActive: new Date().getTime(),
-                isActive: toggle && clickedAppConfig.isActive === true ? false : true
+                isActive: !(toggle && clickedAppConfig.isActive)
             });
 
-            clickedAppConfig.windowConfiguration.minimized = toggle && !clickedAppConfig.isActive ? true : false;
+            clickedAppConfig.windowConfiguration.minimized = toggle && !clickedAppConfig.isActive;
         }
 
         newState.openAppList
-            .sort((item1, item2) => {
+            .sort((item1: AppInstance, item2: AppInstance) => {
                 return item1.lastActive - item2.lastActive
             })
-            .forEach((item, index) => {
+            .forEach((item, index: number) => {
                 item.windowConfiguration.zIndex = index;
                 if (item.name !== name || item.timestamp !== timestamp) {
                     item.isActive = false;
@@ -82,16 +133,16 @@ const useAppList = () => {
         saveAppListState();
     }
 
-    const getAppFromName = appName => applications.find((currentConfig => currentConfig.name === appName));
+    const getAppFromName = (appName: string) => applications.find((currentConfig => currentConfig.name === appName));
 
-    const closeApp = (appName, timestamp) => {
-        const index = state.openAppList.findIndex(app => app.name === appName && timestamp === app.timestamp);
+    const closeApp = (appName: string, timestamp: number) => {
+        const index = (state as AppState).openAppList.findIndex(app => app.name === appName && timestamp === app.timestamp);
         state.openAppList.splice(index, 1);
         saveAppListState();
         setState({...state});
     }
 
-    const openApp = (appName) => {
+    const openApp = (appName: string) => {
         const timestamp = (new Date()).getTime()
         state.openAppList.push({
             ...getAppFromName(appName),
@@ -105,16 +156,16 @@ const useAppList = () => {
             }
         });
         numWindows++;
-        setActiveApp(appName, timestamp);
+        setActiveApp(appName, timestamp, false);
         saveAppListState();
     }
 
-    const getOpenConfigFromName = (name, timestamp) => {
-        return state.openAppList.find(windowConfig =>
-            windowConfig.name === name && windowConfig.timestamp === timestamp);
+    const getOpenConfigFromName = (name: string, timestamp: number): AppInstance => {
+        return (state as AppState).openAppList.find(windowConfig =>
+            windowConfig.name === name && windowConfig.timestamp === timestamp)!;
     }
 
-    const persistNewAppConfig = (name, timestamp, windowConfiguration) => {
+    const persistNewAppConfig = (name: string, timestamp: number, windowConfiguration: WindowsConfiguration) => {
         const appConfig = getOpenConfigFromName(name, timestamp);
         appConfig.windowConfiguration = {...appConfig.windowConfiguration, ...windowConfiguration};
         saveAppListState();
