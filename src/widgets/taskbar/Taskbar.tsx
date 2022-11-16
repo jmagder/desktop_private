@@ -9,7 +9,9 @@ import Configuration from "../Configuration/Configuration";
 import {useDesktopConfig} from "../../Contexts/DesktopConfigContext";
 import {useAppList} from "../../Contexts/AppListContext";
 
+// @ts-ignore
 import StartIcon from '../../icons/start.svg'
+// @ts-ignore
 import CogIcon from '../../icons/settings.svg'
 
 const Taskbar = () => {
@@ -18,6 +20,7 @@ const Taskbar = () => {
 
     const vertical = taskbarLocation === "left" || taskbarLocation === "right";
 
+    // @ts-ignore
     const getTaskbarButtonHandler = ({name, timestamp}) => {
         return () => setActiveApp(name, timestamp, true);
     }
@@ -38,6 +41,7 @@ const Taskbar = () => {
         'vertical': vertical
     });
 
+    // @ts-ignore
     return (
         <div className={classes}>
             <Popover content={<Menu/>} displayBeside={vertical} redrawOnChange={taskbarLocation}>

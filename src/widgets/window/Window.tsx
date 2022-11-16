@@ -1,4 +1,4 @@
-import React, {MouseEventHandler, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useAppList, WindowsConfiguration} from "../../Contexts/AppListContext";
 import './Window.scss';
 
@@ -13,7 +13,7 @@ type Props = {
     timestamp: number,
     icon: string,
     windowConfiguration: WindowsConfiguration,
-    boundingNode: React.MutableRefObject<HTMLElement>,
+    boundingNode: React.MutableRefObject<HTMLElement|null>,
     isActive: boolean,
 }
 

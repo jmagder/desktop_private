@@ -9,8 +9,10 @@ interface AppState {
 }
 
 const DESKTOP_CONFIG_PERSISTENCE_KEY = 'desktopConfig';
-
-const DesktopConfigProvider = (props: {}) => {
+type Props = {
+    children: React.ReactElement
+};
+const DesktopConfigProvider = (props: Props) => {
     let storedState = {
         centered: false,
         taskbarLocation: "bottom"

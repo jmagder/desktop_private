@@ -45,15 +45,16 @@ const calculateStyle = (displayBeside: boolean, anchorNode: any, hiddenContentNo
 }
 
 type Props = {
-    anchor: React.ReactNode,
+    anchor?: React.ReactNode,
     content: React.ReactNode,
     children: React.ReactNode,
     displayBeside: boolean,
     redrawOnChange: boolean,
-    closeOnClick: boolean
+    closeOnClick?: boolean
+    className?: string,
 }
 
-const Popover = ({anchor, content, children, displayBeside, redrawOnChange, closeOnClick}: Props) => {
+const Popover: React.FC<Props> = ({anchor, content, children, displayBeside, redrawOnChange, closeOnClick}: Props) => {
     const popoverAnchor = anchor || children;
 
     const [menuIsOpen, setMenuIsOpen] = useState(false);
