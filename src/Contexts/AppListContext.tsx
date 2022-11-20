@@ -10,6 +10,8 @@ import PieChartIcon from "../icons/pie-chart.svg"
 import BarChartApp from "../Apps/BarChartApp";
 import PieChartApp from "../Apps/PieChartApp";
 import NotesApp from "../Apps/NotesApp";
+import {Pie} from "recharts";
+import Web3App from "../Apps/Web3App/Web3App";
 
 // Represents an application definition
 export interface AppEntry {
@@ -67,6 +69,12 @@ const applications : AppEntry[] = [
         name: "Pie Chart",
         description: "Randomized pie graphs",
         content: <PieChartApp name="" timestamp={new Date()}/>
+    },
+    {
+        icon: PieChartIcon,
+        name: "NFT Explorer",
+        description: 'Explore NFTs',
+        content: <Web3App />
     }
 ];
 
