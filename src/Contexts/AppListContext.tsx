@@ -10,7 +10,6 @@ import PieChartIcon from "../icons/pie-chart.svg"
 import BarChartApp from "../Apps/BarChartApp";
 import PieChartApp from "../Apps/PieChartApp";
 import NotesApp from "../Apps/NotesApp";
-import {Pie} from "recharts";
 import Web3App from "../Apps/Web3App/Web3App";
 
 // Represents an application definition
