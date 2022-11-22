@@ -22,7 +22,7 @@ const BlockHeight = ({updateInterval} : Props) => {
 
     return (
       <div>
-          <h3>Current block height: {currentBlock}</h3>
+          <p>Current block height: {currentBlock}</p>
       </div>
     )
 }

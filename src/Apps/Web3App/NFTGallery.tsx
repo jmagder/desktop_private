@@ -25,7 +25,7 @@ const NFTGallery = ({ address }: Props) => {
       {
         nftList.map((props) => {
           return (
-            <Card {...props}/>
+            <Card {...props} key={`${props.transactionHash}-${props.fromAddress}-${props.token}`}/>
           );
         })
       }
