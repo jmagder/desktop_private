@@ -7,13 +7,15 @@ const ERC721ABI = [
   'event Transfer(address indexed _from, address indexed _to, uint256 indexed _tokenId)',
 ];
 
-let cached_provider:  providers.AlchemyWebSocketProvider | null = null;
+// let cached_provider:  providers.AlchemyWebSocketProvider | null = null;
+let cached_provider:  providers.JsonRpcProvider | null = null;
 
 export const getProvider = () => {
   if (cached_provider) {
     return cached_provider;
   }
-  return cached_provider = providers.AlchemyProvider.getWebSocketProvider("homestead", API_KEY);
+  // return cached_provider = providers.AlchemyProvider.getWebSocketProvider("homestead", API_KEY);
+  return cached_provider = new ethers.providers.JsonRpcProvider("http://localhost:8545");
 };
 
 export const getBlockNumber = async () => {
@@ -62,12 +64,28 @@ export interface NFTResult {
   toAddress: string,
   token: string,
   transactionHash: string,
-  blockNumber: number
+  blockNumber: number,
+  imageURL: string,
+  name: string,
+}
+
+export const getIPFSGatewayURL = (url = "") => {
+  return `https://ipfs.io/ipfs/${url.slice(7)}`;
 }
 
 export const getTokenURI = async (contract: ethers.Contract, tokenId: string) => {
-  const url = await contract.tokenURI(ethers.BigNumber.from(tokenId))
-  debugger;
+  let url = await contract.tokenURI(ethers.BigNumber.from(tokenId))
+  if (url.startsWith('ipfs://')) {
+    url = getIPFSGatewayURL(url);
+  }
+  const response = await fetch(url, { mode: 'cors'});
+  let {image: imageURL} = await response.json();
+  if (imageURL.startsWith('ipfs://')) {
+    imageURL = getIPFSGatewayURL(imageURL);
+    const result = await fetch(imageURL);
+    return URL.createObjectURL(await result.blob());
+  }
+  return imageURL;
 }
 
 export const scanBlockchain = async (address: string, blocksBack: number = 1000): Promise<NFTResult[]> => {
@@ -86,7 +104,8 @@ export const scanBlockchain = async (address: string, blocksBack: number = 1000)
       token,
       transactionHash,
       blockNumber,
-      url: await getTokenURI(ERC721Contract, token)
+      imageURL: await getTokenURI(ERC721Contract, token),
+      name: `#${parseInt(token)}`,
     }
   }));
 }

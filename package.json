@@ -2,6 +2,7 @@
   "name": "desktop",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://localhost:3000",
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
@@ -15,6 +16,7 @@
     "classnames": "^2.3.2",
     "csstype": "^3.1.1",
     "ethers": "^5.7.2",
+    "http-proxy-middleware": "^2.0.6",
     "node-sass": "^8.0.0",
     "prettier": "^2.7.1",
     "react": "^18.2.0",
@@ -28,8 +30,9 @@
   },
   "homepage": ".",
   "scripts": {
-    "start": "GENERATE_SOURCEMAP=true react-scripts start",
-    "build": "react-scripts build",
+    "start": "PORT=3000 GENERATE_SOURCEMAP=true react-scripts start",
+    "start-server": "node server/server.js",
+    "build": "GENERATE_SOURCEMAP=true react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -47,5 +50,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "devDependencies": {}
 }

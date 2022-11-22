@@ -12,13 +12,13 @@ const Web3App = () => {
   }
 
     return (
-      <div>
+      <div className="Web3App" style={{padding: '5px 20px', overflow: 'auto'}}>
         <BlockHeight updateInterval={6000} />
         <p>
           Please select an NFT collection to see what has been traded in the last 1000 blocks:
         </p>
         <NFTCollectionSelector onSelection={changeEventHandler}/>
-        { selectedAddress && <NFTGallery address={selectedAddress} />}
+        <NFTGallery address={selectedAddress} />
       </div>
     )
 }
