@@ -23,9 +23,9 @@ const NFTGallery = ({ address }: Props) => {
     <div className="NFTGallery">
       { address && <RingLoader loading={isLoading}/> }
       {
-        nftList.map(({imageURL, name}) => {
+        nftList.map((props) => {
           return (
-            <Card imageURL={imageURL} name={name} />
+            <Card {...props}/>
           );
         })
       }

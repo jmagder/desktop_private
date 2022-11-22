@@ -2,6 +2,7 @@ import React, {ChangeEventHandler, useState} from "react";
 import BlockHeight from "./BlockHeight";
 import NFTCollectionSelector from "./NFTCollectionSelector";
 import NFTGallery from "./NFTGallery";
+import "./Web3App.scss";
 
 const Web3App = () => {
   const [selectedAddress, setSelectedAddress] = useState("");
@@ -12,7 +13,7 @@ const Web3App = () => {
   }
 
     return (
-      <div className="Web3App" style={{padding: '5px 20px', overflow: 'auto'}}>
+      <div className="Web3App">
         <BlockHeight updateInterval={6000} />
         <p>
           Please select an NFT collection to see what has been traded in the last 1000 blocks:
