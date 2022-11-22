@@ -1,16 +1,16 @@
-import React from "react";
-import "./card.scss";
+import React from 'react'
+import './card.scss'
 
-type Props = {
-  imageURL: string;
-  name: string;
-  blockNumber: number;
-  fromAddress: string;
-  toAddress: string;
-  transactionHash: string;
+interface Props {
+  imageURL: string
+  name: string
+  blockNumber: number
+  fromAddress: string
+  toAddress: string
+  transactionHash: string
 }
 
-const Card = ({ imageURL, name, blockNumber, fromAddress, toAddress, transactionHash }: Props) => {
+const Card: React.FunctionComponent<Props> = ({ imageURL, name, blockNumber, fromAddress, toAddress, transactionHash }: Props) => {
   return (
     <div className="Card">
       <img src={imageURL} alt={name}/>
@@ -19,6 +19,6 @@ const Card = ({ imageURL, name, blockNumber, fromAddress, toAddress, transaction
       <div>To: {toAddress}</div>
       <div><a href={`https://etherscan.io/tx/${transactionHash}`} target="_blank" rel="noopener noreferrer">Etherscan</a></div>
     </div>
-  );
+  )
 }
-export default Card;
+export default Card

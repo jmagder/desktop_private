@@ -1,41 +1,40 @@
-import React from "react";
-import './Configuration.scss';
-import {useDesktopConfig} from "../../Contexts/DesktopConfigContext";
+import React from 'react'
+import './Configuration.scss'
+import { useDesktopConfig } from '../../Contexts/DesktopConfigContext'
 
-const Configuration = () => {
+const Configuration: React.FunctionComponent = () => {
+  const { centered, setCentered, taskbarLocation, setTaskbarLocation } = useDesktopConfig()
 
-    const {centered, setCentered, taskbarLocation, setTaskbarLocation} = useDesktopConfig();
+  const onTaskbarChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    setTaskbarLocation(event.target.value)
+  }
 
-    const onTaskbarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setTaskbarLocation(event.target.value);
-    };
+  const onCenterChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    setCentered(event.target.value === 'true')
+  }
 
-    const onCenterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setCentered(event.target.value === "true");
-    };
-
-    return (
+  return (
         <div className="Configuration">
             <fieldset>
                 <legend>Taskbar Location</legend>
                 <label>
                     <input type="radio" id="top" name='taskbarLocation' value="top"
-                           checked={taskbarLocation === "top"} onChange={onTaskbarChange} />
+                           checked={taskbarLocation === 'top'} onChange={onTaskbarChange} />
                     Top
                 </label>
                 <label>
                     <input type="radio" id="right" name='taskbarLocation' value="right"
-                           checked={taskbarLocation === "right"} onChange={onTaskbarChange}/>
+                           checked={taskbarLocation === 'right'} onChange={onTaskbarChange}/>
                     Right
                 </label>
                 <label>
                     <input type="radio" id="bottom" name='taskbarLocation' value="bottom"
-                           checked={taskbarLocation === "bottom"} onChange={onTaskbarChange}/>
+                           checked={taskbarLocation === 'bottom'} onChange={onTaskbarChange}/>
                     Bottom
                 </label>
                 <label>
                     <input type="radio" id="left" name='taskbarLocation' value="left"
-                           checked={taskbarLocation === "left"} onChange={onTaskbarChange}/>
+                           checked={taskbarLocation === 'left'} onChange={onTaskbarChange}/>
                     Left
                 </label>
             </fieldset>
@@ -51,7 +50,7 @@ const Configuration = () => {
                 </label>
             </fieldset>
         </div>
-    )
-};
+  )
+}
 
-export default Configuration;
+export default Configuration

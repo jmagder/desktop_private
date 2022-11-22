@@ -1,31 +1,31 @@
-import React from "react";
+import React from 'react'
 import './Taskbar.scss'
-import TaskbarButton from "../taskbarButton/TaskbarButton";
-import classNames from 'classnames';
-import Popover from "../Popover/Popover";
-import Menu from "../Menu/Menu";
-import Configuration from "../Configuration/Configuration";
+import TaskbarButton from '../taskbarButton/TaskbarButton'
+import classNames from 'classnames'
+import Popover from '../Popover/Popover'
+import Menu from '../Menu/Menu'
+import Configuration from '../Configuration/Configuration'
 
-import {useDesktopConfig} from "../../Contexts/DesktopConfigContext";
-import {useAppList} from "../../Contexts/AppListContext";
+import { useDesktopConfig } from '../../Contexts/DesktopConfigContext'
+import { useAppList } from '../../Contexts/AppListContext'
 
-// @ts-ignore
+// @ts-expect-error
 import StartIcon from '../../icons/start.svg'
-// @ts-ignore
+// @ts-expect-error
 import CogIcon from '../../icons/settings.svg'
 
-const Taskbar = () => {
-    const {centered, taskbarLocation} = useDesktopConfig();
-    const {openAppList, setActiveApp} = useAppList();
+const Taskbar: React.FunctionComponent = () => {
+  const { centered, taskbarLocation } = useDesktopConfig()
+  const { openAppList, setActiveApp } = useAppList()
 
-    const vertical = taskbarLocation === "left" || taskbarLocation === "right";
+  const vertical = taskbarLocation === 'left' || taskbarLocation === 'right'
 
-    // @ts-ignore
-    const getTaskbarButtonHandler = ({name, timestamp}) => {
-        return () => setActiveApp(name, timestamp, true);
-    }
+  // @ts-expect-error
+  const getTaskbarButtonHandler = ({ name, timestamp }) => {
+    return () => setActiveApp(name, timestamp, true)
+  }
 
-    const taskbarButtons = openAppList.map(value =>
+  const taskbarButtons = openAppList.map(value =>
         <TaskbarButton
             hideLabel={vertical}
             key={value.timestamp}
@@ -33,16 +33,15 @@ const Taskbar = () => {
             name={value.name}
             isActive={value.isActive}
             handleClick={getTaskbarButtonHandler(value)}>
-        </TaskbarButton>);
+        </TaskbarButton>)
 
-    const classes = classNames({
-        'Taskbar': true,
-        'center': centered,
-        'vertical': vertical
-    });
+  const classes = classNames({
+    Taskbar: true,
+    center: centered,
+    vertical
+  })
 
-    // @ts-ignore
-    return (
+  return (
         <div className={classes}>
             <Popover content={<Menu/>} displayBeside={vertical} redrawOnChange={taskbarLocation}>
                 <TaskbarButton name="hello">
@@ -59,7 +58,7 @@ const Taskbar = () => {
                 </Popover>
             </div>
         </div>
-    )
+  )
 }
 
-export default Taskbar;
+export default Taskbar
