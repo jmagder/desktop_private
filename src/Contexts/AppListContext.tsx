@@ -6,6 +6,8 @@ import Notes from '../icons/note.svg'
 import BarChartIcon from '../icons/bar-chart.svg'
 // @ts-expect-error
 import PieChartIcon from '../icons/pie-chart.svg'
+// @ts-expect-error
+import GalleryIcon from '../icons/gallery.svg'
 import BarChartApp from '../Apps/BarChartApp'
 import PieChartApp from '../Apps/PieChartApp'
 import NotesApp from '../Apps/NotesApp'
@@ -69,7 +71,7 @@ const applications: AppEntry[] = [
     content: <PieChartApp name="" timestamp={new Date()}/>
   },
   {
-    icon: PieChartIcon,
+    icon: GalleryIcon,
     name: 'NFT Explorer',
     description: 'Explore NFTs',
     content: <Web3App />
