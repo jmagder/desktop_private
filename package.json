@@ -18,7 +18,6 @@
     "ethers": "^5.7.2",
     "http-proxy-middleware": "^2.0.6",
     "node-sass": "^8.0.0",
-    "prettier": "^2.7.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^4.6.0",
@@ -32,7 +31,7 @@
   "scripts": {
     "start": "PORT=3000 GENERATE_SOURCEMAP=true  DISABLE_ESLINT_PLUGIN=true react-scripts start",
     "start-server": "node server/server.js",
-    "build": "GENERATE_SOURCEMAP=true react-scripts build",
+    "build": "GENERATE_SOURCEMAP=true DISABLE_ESLINT_PLUGIN=true react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
