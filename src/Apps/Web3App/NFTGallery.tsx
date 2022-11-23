@@ -21,7 +21,7 @@ const NFTGallery: React.FunctionComponent<Props> = ({ address }: Props) => {
   }, [address])
   return (
     <div className="NFTGallery">
-      { (address !== '') && <RingLoader loading={isLoading}/> }
+      { (address !== '') && isLoading && <RingLoader/> }
       {
         nftList.map((props) => {
           return (
@@ -30,7 +30,7 @@ const NFTGallery: React.FunctionComponent<Props> = ({ address }: Props) => {
         })
       }
       {
-        nftList.length === 0 && (address !== '') ? <h2>No NFTs found</h2> : ''
+        nftList.length === 0 && (address !== '') && !isLoading ? <h2>No NFTs found</h2> : ''
       }
     </div>
   )

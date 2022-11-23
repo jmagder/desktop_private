@@ -1,6 +1,5 @@
 import React, { useContext, useState } from 'react'
 
-// JEFF: TODO find out type for importing svg
 // @ts-expect-error
 import Notes from '../icons/note.svg'
 // @ts-expect-error
