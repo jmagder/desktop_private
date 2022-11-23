@@ -22,8 +22,8 @@ export interface AppEntry {
 
 // Window dimensions, zIndex, location, etc
 export interface WindowsConfiguration {
-  width?: number
-  height?: number
+  width: number
+  height: number
   top?: number
   left?: number
   maximized?: boolean

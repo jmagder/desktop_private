@@ -15,7 +15,7 @@ const TaskbarButton: React.FunctionComponent<Props> = ({ name, icon, isActive, h
             className={`TaskbarButton  ${(isActive === true) ? 'isActive' : ''}`}
             onClick={handleClick}
         >
-            {children || <React.Fragment>
+            {children ?? <React.Fragment>
                     <img src={icon} className="small-icon" alt=""/>
                     <span className={`app-name ${(hideLabel === true) ? 'hide-label' : ''}`}>{name}</span>
                 </React.Fragment>

@@ -17,7 +17,7 @@ interface Props {
   isActive: boolean
 }
 
-const Window: React.FunctionComponent<Props> = ({ name, timestamp, icon, windowConfiguration = {}, boundingNode, isActive }: Props) => {
+const Window: React.FunctionComponent<Props> = ({ name, timestamp, icon, windowConfiguration, boundingNode, isActive }: Props) => {
   const { width, height, zIndex, top, left, minimized, maximized } = windowConfiguration
   const windowNodeRef = React.useRef<HTMLDivElement>(null)
   const { setActiveApp, persistNewAppConfig, closeApp, getAppFromName } = useAppList()
@@ -39,7 +39,7 @@ const Window: React.FunctionComponent<Props> = ({ name, timestamp, icon, windowC
   const [firstTime, setFirstTime] = useState(true)
   const [closing, setIsClosing] = useState(false)
 
-  const getBoundingNode = () => {
+  const getBoundingNode = (): HTMLElement | null | ParentNode => {
     if (boundingNode.current != null) {
       return boundingNode.current
     }
@@ -49,7 +49,7 @@ const Window: React.FunctionComponent<Props> = ({ name, timestamp, icon, windowC
     return null
   }
 
-  const persistWindowPositioning = (maximized?: boolean, minimized?: boolean) => {
+  const persistWindowPositioning = (maximized?: boolean, minimized?: boolean): void => {
     const style = (windowNodeRef.current != null) ? windowNodeRef.current.style : { top: '0', left: '0', width: '0', height: '0' }
     persistNewAppConfig(name, timestamp, {
       top: parseInt(style.top),
@@ -61,7 +61,11 @@ const Window: React.FunctionComponent<Props> = ({ name, timestamp, icon, windowC
     })
   }
 
-  const getEventCoordinates = (event: React.MouseEvent) => {
+  interface EventCoordinates {
+    clientX: number
+    clientY: number
+  }
+  const getEventCoordinates = (event: React.MouseEvent): EventCoordinates => {
     const result = {
       clientX: event.clientX,
       clientY: event.clientY
@@ -74,9 +78,9 @@ const Window: React.FunctionComponent<Props> = ({ name, timestamp, icon, windowC
     return result
   }
 
-  const setupMouseInteraction = (event: React.MouseEvent | React.TouchEvent) => {
+  const setupMouseInteraction = (event: React.MouseEvent | React.TouchEvent): void => {
     // @ts-expect-error
-    windowBoundingBox = (windowNodeRef.current != null) && windowNodeRef.current.getBoundingClientRect()
+    windowBoundingBox = windowNodeRef.current?.getBoundingClientRect()
     // @ts-expect-error
     parentBoundingBox = getBoundingNode().getBoundingClientRect()
     const coordinates = getEventCoordinates(event as React.MouseEvent)
@@ -84,7 +88,7 @@ const Window: React.FunctionComponent<Props> = ({ name, timestamp, icon, windowC
     yMouseDownStart = coordinates.clientY
   }
 
-  const handleMouseDownResize = (event: React.MouseEvent | React.TouchEvent) => {
+  const handleMouseDownResize = (event: React.MouseEvent | React.TouchEvent): void => {
     setupMouseInteraction(event)
 
     xMaxGrowth = parentBoundingBox.right - windowBoundingBox.right
@@ -114,21 +118,21 @@ const Window: React.FunctionComponent<Props> = ({ name, timestamp, icon, windowC
     setActiveApp(name, timestamp, false)
   }
 
-  const handleMouseMoveResize = (event: React.MouseEvent) => {
+  const handleMouseMoveResize = (event: React.MouseEvent): void => {
     const { clientX, clientY } = getEventCoordinates(event)
     const diffX = clientX - xMouseDownStart
     const diffY = clientY - yMouseDownStart
 
     if (!constrainToVertical) {
-      windowNodeRef.current!.style.width = startWidth + Math.min(diffX, xMaxGrowth) + 'px'
+      windowNodeRef.current!.style.width = `${startWidth + Math.min(diffX, xMaxGrowth)}px`
     }
     if (!constrainToHorizontal) {
-      windowNodeRef.current!.style.height = startHeight + Math.min(diffY, yMaxGrowth) + 'px'
+      windowNodeRef.current!.style.height = `${startHeight + Math.min(diffY, yMaxGrowth)}px`
     }
     windowNodeRef.current!.classList.add('resizing')
   }
 
-  const handleMouseUpResize = () => {
+  const handleMouseUpResize = (): void => {
     // @ts-expect-error
     document.removeEventListener('mousemove', handleMouseMoveResize)
     // @ts-expect-error
@@ -140,17 +144,15 @@ const Window: React.FunctionComponent<Props> = ({ name, timestamp, icon, windowC
     persistWindowPositioning()
   }
 
-  const handleMouseDownDrag = (event: React.MouseEvent | React.TouchEvent) => {
+  const handleMouseDownDrag = (event: React.MouseEvent | React.TouchEvent): void => {
     setupMouseInteraction(event)
     const coordinates = getEventCoordinates(event as React.MouseEvent)
     setActiveApp(name, timestamp, false)
-    if (maximized) {
+    if (maximized === true) {
       return
     }
     const node = event.currentTarget as HTMLElement
-    if (!node) {
-      return
-    }
+
     // @ts-expect-error
     if (event.target.attributes['data-drag']) {
       // @ts-expect-error
@@ -164,7 +166,7 @@ const Window: React.FunctionComponent<Props> = ({ name, timestamp, icon, windowC
     }
   }
 
-  const handleMouseMoveDrag = (e: React.MouseEvent) => {
+  const handleMouseMoveDrag = (e: React.MouseEvent): void => {
     const { clientX, clientY } = getEventCoordinates(e)
     const draggedNode = windowNodeRef.current
     if (draggedNode == null) {
@@ -186,7 +188,7 @@ const Window: React.FunctionComponent<Props> = ({ name, timestamp, icon, windowC
     draggedNode.classList.add('dragging')
   }
 
-  const handleMouseUpDrag = () => {
+  const handleMouseUpDrag = (): void => {
     // @ts-expect-error
     document.removeEventListener('mousemove', handleMouseMoveDrag)
     // @ts-expect-error
@@ -197,7 +199,7 @@ const Window: React.FunctionComponent<Props> = ({ name, timestamp, icon, windowC
     persistWindowPositioning()
   }
 
-  const handleCloseClick = () => {
+  const handleCloseClick = (): void => {
     setIsClosing(true)
     // Remove the window after the animation
     setTimeout(() => {
@@ -205,13 +207,13 @@ const Window: React.FunctionComponent<Props> = ({ name, timestamp, icon, windowC
     }, 200)
   }
 
-  const handleMaximizeToggle = () => {
-    persistWindowPositioning(!maximized, false)
+  const handleMaximizeToggle = (): void => {
+    persistWindowPositioning(maximized === false, false)
   }
 
-  const handleMinimizeToggle = () => {
+  const handleMinimizeToggle = (): void => {
     setActiveApp()
-    persistWindowPositioning(false, !minimized)
+    persistWindowPositioning(false, minimized === false)
   }
 
   // Allow fade in animation.
@@ -241,9 +243,6 @@ const Window: React.FunctionComponent<Props> = ({ name, timestamp, icon, windowC
   // @ts-expect-error
   const wrappedContent = React.Children.map(content, child => React.cloneElement(child, { timestamp, name }))
 
-  if (!windowNodeRef) {
-    return <></>
-  }
   // Set default position to whatever the last save translate was.
   return (
         <CSSTransition in={!firstTime && !closing} classNames='visibility' timeout={200}>
