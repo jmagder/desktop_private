@@ -1,4 +1,4 @@
-import React, {FunctionComponent, useContext, useState} from 'react'
+import React, { useContext, useState } from 'react'
 
 const DesktopConfigContext = React.createContext<AppState>({ centered: false, taskbarLocation: 'bottom' })
 
