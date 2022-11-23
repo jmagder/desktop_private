@@ -1,17 +1,17 @@
-import React from 'react';
-import './App.scss';
-import Taskbar from "./widgets/taskbar/Taskbar";
+import React from 'react'
+import './App.scss'
+import Taskbar from './widgets/taskbar/Taskbar'
 import Window from './widgets/window/Window'
 
-import {useDesktopConfig} from "./Contexts/DesktopConfigContext";
-import {useAppList} from "./Contexts/AppListContext";
+import { useDesktopConfig } from './Contexts/DesktopConfigContext'
+import { useAppList } from './Contexts/AppListContext'
 
-function App() {
-    const {taskbarLocation} = useDesktopConfig();
-    const {openAppList} = useAppList();
-    const desktopNodeRef = React.useRef(null);
+const App: React.FunctionComponent = () => {
+  const { taskbarLocation } = useDesktopConfig()
+  const { openAppList } = useAppList()
+  const desktopNodeRef = React.useRef(null)
 
-    return (
+  return (
         <div className="App">
             <div className={`grid-container taskbar-${taskbarLocation}`}>
                 <div id="desktop" ref={desktopNodeRef}>
@@ -25,7 +25,7 @@ function App() {
                 </div>
             </div>
         </div>
-    );
+  )
 }
 
-export default App;
+export default App
